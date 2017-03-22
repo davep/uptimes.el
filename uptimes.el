@@ -60,14 +60,6 @@
   (unless (fboundp 'values)
     (defalias 'values 'list)))
 
-;; Create a version constant.
-
-(defconst uptimes-version
-    (let ((revision "$Revision: 2.3 $"))
-      (when (string-match ": \\([0-9.]+\\)" revision)
-        (match-string 1 revision)))
-  "uptimes version.")
-
 ;; Customize options.
 
 (defgroup uptimes nil
