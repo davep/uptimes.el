@@ -12,7 +12,7 @@
 ;;; Commentary:
 ;;
 ;; uptimes.el provides a simple system for tracking and displaying the
-;; uptimes of your emacs sessions. Simply loading uptimes.el from your
+;; uptimes of your Emacs sessions. Simply loading uptimes.el from your
 ;; ~/.emacs file will start the tracking of any session.
 ;;
 ;; The latest version of uptimes.el can be found at:
@@ -103,12 +103,12 @@
 ;; doesn't quite seem right, perhaps I'm missing something?
 
 (defun uptimes-float-time (&optional tm)
-  "Convert `current-time' to a float number of seconds."
+  "Convert `current-time' (or TM) to a float number of seconds."
   (multiple-value-bind (s0 s1 s2) (or tm (current-time))
     (+ (* (float (ash 1 16)) s0) (float s1) (* 0.0000001 s2))))
 
 (defun uptimes-time-float (num)
-  "Convert the float number of seconds since epoch to the list of 3 integers."
+  "Convert NUM (float seconds since epoch) to a list of 3 integers."
   (let* ((div (ash 1 16))
          (1st (floor num div)))
     (list 1st (floor (- num (* (float div) 1st)))
@@ -263,7 +263,7 @@ The result is returned as the following `values':
 
 ;;;###autoload
 (defun uptimes-this ()
-  "Display the uptime for the current emacs session."
+  "Display the uptime for the current Emacs session."
   (interactive)
   (uptimes-save-uptimes)
   (message "emacs has been up and running for %s" (uptimes-wordy-uptime)))
