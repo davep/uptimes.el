@@ -4,7 +4,7 @@
 ;; Author: Dave Pearson <davep@davep.org>
 ;; Version: 2.4
 ;; Keywords: uptime
-;; URL: https://github.com/davep/thinks.el
+;; URL: https://github.com/davep/uptimes.el
 
 ;; uptimes.el is free software distributed under the terms of the GNU
 ;; General Public Licence, version 2. For details see the file COPYING.
