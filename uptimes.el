@@ -2,7 +2,7 @@
 ;; Copyright 1999-2017 by Dave Pearson <davep@davep.org>
 
 ;; Author: Dave Pearson <davep@davep.org>
-;; Version: 2.4
+;; Version: 2.5
 ;; Keywords: uptime
 ;; URL: https://github.com/davep/uptimes.el
 
