@@ -60,7 +60,7 @@
   :group 'games
   :prefix "uptimes-")
 
-(defcustom uptimes-database (locate-user-emacs-file ".emacs-uptimes")
+(defcustom uptimes-database (locate-user-emacs-file ".uptimes.el" "~/.emacs-uptimes")
   "*Database of uptimes."
   :type  'file
   :group 'uptimes)
