@@ -249,7 +249,7 @@ The result is returned as the following `values':
     (uptimes-print-uptimes uptimes-top-n)))
 
 ;;;###autoload
-(defun uptimes-this ()
+(defun uptimes-current ()
   "Display the uptime for the current Emacs session."
   (interactive)
   (uptimes-save)
