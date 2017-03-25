@@ -206,8 +206,10 @@ The result is returned as the following `values':
                       (> (uptimes-uptime (cadr x) (cddr x))
                          (uptimes-uptime (cadr y) (cddr y)))))))))
 
+;;;###autoload
 (defun uptimes-save ()
   "Write the uptimes to `uptimes-database'."
+  (interactive)
   (uptimes-update)
   (with-temp-buffer
     (let ((standard-output (current-buffer)))
