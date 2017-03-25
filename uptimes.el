@@ -206,7 +206,7 @@ The result is returned as the following `values':
                       (> (uptimes-uptime (cadr x) (cddr x))
                          (uptimes-uptime (cadr y) (cddr y)))))))))
 
-(defun uptimes-save-uptimes ()
+(defun uptimes-save ()
   "Write the uptimes to `uptimes-database'."
   (uptimes-update)
   (with-temp-buffer
@@ -239,7 +239,7 @@ The result is returned as the following `values':
 (defun uptimes ()
   "Display the last and top `uptimes-keep-count' uptimes."
   (interactive)
-  (uptimes-save-uptimes)
+  (uptimes-save)
   (with-output-to-temp-buffer "*uptimes*"
     (princ (format "Last %d uptimes\n\n" uptimes-keep-count))
     (uptimes-print-uptimes uptimes-last-n)
@@ -250,18 +250,18 @@ The result is returned as the following `values':
 (defun uptimes-this ()
   "Display the uptime for the current Emacs session."
   (interactive)
-  (uptimes-save-uptimes)
+  (uptimes-save)
   (message "emacs has been up and running for %s" (uptimes-wordy-uptime)))
 
 ;; Register our presence and, if `uptimes-auto-save' is true, kick off the
 ;; auto-save process.
 
 (eval-when (load eval)
-  (uptimes-save-uptimes)
+  (uptimes-save)
   (when uptimes-auto-save
     (setq uptimes-auto-save-timer
-          (run-at-time nil uptimes-auto-save-interval #'uptimes-save-uptimes)))
-  (add-hook 'kill-emacs-hook #'uptimes-save-uptimes))
+          (run-at-time nil uptimes-auto-save-interval #'uptimes-save)))
+  (add-hook 'kill-emacs-hook #'uptimes-save))
 
 (provide 'uptimes)
 
