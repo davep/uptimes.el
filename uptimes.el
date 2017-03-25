@@ -251,8 +251,7 @@ The result is returned as the following `values':
 
 ;; Register our presence and, if `uptimes-auto-save' is true, kick off the
 ;; auto-save process.
-
-(eval-when (load eval)
+(progn
   (uptimes-save)
   (when uptimes-auto-save
     (setq uptimes-auto-save-timer
