@@ -47,12 +47,6 @@
 (require 'pp)
 (require 'timer)
 
-;; Because cl is only required at compile time we'll do the alias for
-;; `values' ourself during run-time.
-(eval-when (load eval)
-  (unless (fboundp 'values)
-    (defalias 'values 'list)))
-
 ;; Customize options.
 
 (defgroup uptimes nil
@@ -146,7 +140,7 @@ The result is returned as the following `values':
          (hours (progn (decf now (* days  86400)) (floor (/ now 3600))))
          (mins  (progn (decf now (* hours 3600))  (floor (/ now 60))))
          (secs  (progn (decf now (* mins  60))    (floor now))))
-    (values days hours mins secs)))
+    (list days hours mins secs)))
 
 (defun* uptimes-uptime-string (&optional (boottime uptimes-boottime)
                                          (endtime (uptimes-float-time)))
