@@ -47,14 +47,6 @@
 (require 'pp)
 (require 'timer)
 
-;; Attempt to handle older/other emacs.
-(eval-and-compile
-  ;; If customize isn't available just use defvar instead.
-  (unless (fboundp 'defgroup)
-    (defmacro defgroup  (&rest rest) nil)
-    (defmacro defcustom (symbol init docstring &rest rest)
-      `(defvar ,symbol ,init ,docstring))))
-
 ;; Because cl is only required at compile time we'll do the alias for
 ;; `values' ourself during run-time.
 (eval-when (load eval)
