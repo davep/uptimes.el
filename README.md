@@ -1,3 +1,5 @@
+[![MELPA](https://melpa.org/packages/uptimes-badge.svg)](https://melpa.org/#/uptimes)
+
 # Commentary
 
 `uptimes.el` provides a simple system for tracking and displaying the
