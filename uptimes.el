@@ -134,7 +134,7 @@ default is the boot-time of the current process. ENDTIME is the optional
 time at which the emacs process closed down, if not supplied the default is
 the current time.
 
-The result is returned as the following `values':
+The result is returned as the following `list':
 
   (DAYS HOURS MINS SECS)"
   (let* ((now   (uptimes-uptime boottime endtime))
