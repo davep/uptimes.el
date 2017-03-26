@@ -147,14 +147,14 @@ The result is returned as the following `list':
 (defun* uptimes-uptime-string (&optional (boottime uptimes-boottime)
                                          (endtime (uptimes-float-time)))
   "Return `uptimes-uptime-values' as a human readable string."
-  (multiple-value-bind (days hours mins secs)
+  (cl-multiple-value-bind (days hours mins secs)
       (uptimes-uptime-values boottime endtime)
     (format "%d.%02d:%02d:%02d" days hours mins secs)))
 
 (defun* uptimes-wordy-uptime (&optional (boottime uptimes-boottime)
                                         (endtime (uptimes-float-time)))
   "Return `uptimes-uptime-values' as a \"wordy\" string."
-  (multiple-value-bind (days hours mins secs)
+  (cl-multiple-value-bind (days hours mins secs)
       (uptimes-uptime-values boottime endtime)
     (cl-flet* ((mul (n word) (concat word (unless (= n 1) "s")))
                (say (n word) (format "%d %s" n (mul n word))))
