@@ -83,7 +83,7 @@
 
 (defun uptimes-float-time (&optional tm)
   "Convert `current-time' (or TM) to a float number of seconds."
-  (multiple-value-bind (s0 s1 s2) (or tm (current-time))
+  (cl-multiple-value-bind (s0 s1 s2) (or tm (current-time))
     (+ (* (float (ash 1 16)) s0) (float s1) (* 0.0000001 s2))))
 
 (defun uptimes-time-float (num)
