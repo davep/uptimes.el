@@ -1,3 +1,4 @@
+[![MELPA Stable](https://stable.melpa.org/packages/uptimes-badge.svg)](https://stable.melpa.org/#/uptimes)
 [![MELPA](https://melpa.org/packages/uptimes-badge.svg)](https://melpa.org/#/uptimes)
 
 # Commentary
