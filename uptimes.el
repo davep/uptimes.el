@@ -95,8 +95,10 @@
 
 ;; Non-customize variables.
 
-(defvar uptimes-boottime (uptimes-float-time)
-  "The time that uptimes.el came into existance.")
+(defvar uptimes-boottime (uptimes-float-time before-init-time)
+  "The time that uptimes.el came into existance.
+
+Normaly populated from `before-init-time'.")
 
 (defvar uptimes-last-n nil
   "Last `uptimes-keep-count' uptimes.")
