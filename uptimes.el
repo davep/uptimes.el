@@ -156,15 +156,17 @@ The result is returned as the following `list':
   "Return `uptimes-uptime-values' as a \"wordy\" string."
   (cl-multiple-value-bind (days hours mins secs)
       (uptimes-uptime-values boottime endtime)
-    (cl-flet* ((mul (n word) (concat word (unless (= n 1) "s")))
-               (say (n word) (format "%d %s" n (mul n word))))
-      (concat (say days "day")
-              ", "
-              (say hours "hour")
-              ", "
-              (say mins "minute")
-              " and "
-              (say secs "second")))))
+    ;; Yes, I know cl-flet* would make more sense here; this is what I used
+    ;; to use here. However: https://github.com/davep/uptimes.el/issues/2
+    (cl-flet ((mul (n word) (concat word (unless (= n 1) "s"))))
+      (cl-flet ((say (n word) (format "%d %s" n (mul n word))))
+        (concat (say days "day")
+                ", "
+                (say hours "hour")
+                ", "
+                (say mins "minute")
+                " and "
+                (say secs "second"))))))
 
 (defun uptimes-read-uptimes ()
   "Read the uptimes database into `uptimes-last-n' and `uptimes-top-n'."
@@ -179,28 +181,30 @@ The result is returned as the following `list':
 (defun uptimes-update ()
   "Update `uptimes-last-n' and `uptimes-top-n'."
   (uptimes-read-uptimes)
-  (cl-flet* ((trunc (list &optional (where uptimes-keep-count))
+  ;; Yes, I know cl-flet* would make more sense here; this is what I used to
+  ;; use here. However: https://github.com/davep/uptimes.el/issues/2
+  (cl-flet ((trunc (list &optional (where uptimes-keep-count))
                     (let ((trunc-point (nthcdr (1- where) list)))
                       (when (consp trunc-point)
                         (setf (cdr trunc-point) nil)))
-                    list)
-             (update (list now sort-pred)
-                     (let* ((key  (uptimes-key))
-                            (this (cdr (assoc key list))))
-                       (unless this
-                         (setq this (cons uptimes-boottime nil))
-                         (push (cons key this) list))
+                    list))
+    (cl-flet ((update (list now sort-pred)
+                (let* ((key  (uptimes-key))
+                       (this (cdr (assoc key list))))
+                  (unless this
+                    (setq this (cons uptimes-boottime nil))
+                    (push (cons key this) list))
                        (setf (cdr this) now)
                        (trunc (sort list sort-pred)))))
-    (let ((now (uptimes-float-time)))
-      (setq uptimes-last-n
-            (update uptimes-last-n now
-                    (lambda (x y) (> (cddr x) (cddr y)))))
-      (setq uptimes-top-n
-            (update uptimes-top-n now
-                    (lambda (x y)
-                      (> (uptimes-uptime (cadr x) (cddr x))
-                         (uptimes-uptime (cadr y) (cddr y)))))))))
+      (let ((now (uptimes-float-time)))
+        (setq uptimes-last-n
+              (update uptimes-last-n now
+                      (lambda (x y) (> (cddr x) (cddr y)))))
+        (setq uptimes-top-n
+              (update uptimes-top-n now
+                      (lambda (x y)
+                        (> (uptimes-uptime (cadr x) (cddr x))
+                           (uptimes-uptime (cadr y) (cddr y))))))))))
 
 ;;;###autoload
 (defun uptimes-save ()
