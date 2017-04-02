@@ -20,13 +20,6 @@
 ;;
 ;;   <URL:https://github.com/davep/uptimes.el>
 
-;;; TODO:
-;;
-;; o The auto-update stuff won't work with xemacs because I'm making use of
-;;   `run-at-time'. If anyone knows of a high-level function that does the
-;;   same thing and is available in GNU emacs and xemacs I'd love to hear
-;;   about it.
-
 ;;; THANKS:
 ;;
 ;; Istvan Marko <imarko@pacificnet.net> for pointing out that a default of
