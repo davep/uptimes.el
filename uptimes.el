@@ -5,7 +5,7 @@
 ;; Version: 3.2
 ;; Keywords: uptime
 ;; URL: https://github.com/davep/uptimes.el
-;; Package-Requires: ((cl-lib "0.5"))
+;; Package-Requires: ((cl-lib "0.5") (emacs "24"))
 
 ;; uptimes.el is free software distributed under the terms of the GNU
 ;; General Public Licence, version 2. For details see the file COPYING.
