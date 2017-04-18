@@ -48,23 +48,23 @@
   :prefix "uptimes-")
 
 (defcustom uptimes-database (locate-user-emacs-file ".uptimes.el" "~/.emacs-uptimes")
-  "*Database of uptimes."
+  "Database of uptimes."
   :type  'file
   :group 'uptimes)
 
 (defcustom uptimes-keep-count 10
-  "*Number of uptimes to keep."
+  "Number of uptimes to keep."
   :type  'integer
   :group 'uptimes)
 
 (defcustom uptimes-auto-save t
-  "*Should we auto-save our uptime data?"
+  "Should we auto-save our uptime data?"
   :type  '(choice (const :tag "Yes, auto-save uptime details" t)
                   (const :tag "No, don't auto-save details" nil))
   :group 'uptimes)
 
 (defcustom uptimes-auto-save-interval 300
-  "*How often, in seconds, should we auto-save the data?"
+  "How often, in seconds, should we auto-save the data?"
   :type  'integer
   :group 'uptimes)
 
