@@ -107,19 +107,19 @@ is probided so that you can kill/restart the timer in your own code.")
 
 ;; Main code.
 
-(defun* uptimes-key (&optional (boottime uptimes-boottime))
+(cl-defun uptimes-key (&optional (boottime uptimes-boottime))
   "Return an `assoc' key for the given BOOTTIME.
 
 If not supplied BOOTTIME defaults to `uptimes-boottime'."
   (format "%.7f" boottime))
 
-(defun* uptimes-uptime (&optional (boottime uptimes-boottime)
-                                  (endtime (uptimes-float-time)))
+(cl-defun uptimes-uptime (&optional (boottime uptimes-boottime)
+                                    (endtime (uptimes-float-time)))
   "Return the uptime of BOOTTIME at ENDTIME."
   (- endtime boottime))
 
-(defun* uptimes-uptime-values (&optional (boottime uptimes-boottime)
-                                         (endtime (uptimes-float-time)))
+(cl-defun uptimes-uptime-values (&optional (boottime uptimes-boottime)
+                                           (endtime (uptimes-float-time)))
   "Get the different parts of an uptime.
 
 BOOTTIME is an optional boot-time for an emacs process, if not supplied the
@@ -132,20 +132,20 @@ The result is returned as the following `list':
   (DAYS HOURS MINS SECS)"
   (let* ((now   (uptimes-uptime boottime endtime))
          (days  (floor (/ now 86400)))
-         (hours (progn (decf now (* days  86400)) (floor (/ now 3600))))
-         (mins  (progn (decf now (* hours 3600))  (floor (/ now 60))))
-         (secs  (progn (decf now (* mins  60))    (floor now))))
+         (hours (progn (cl-decf now (* days  86400)) (floor (/ now 3600))))
+         (mins  (progn (cl-decf now (* hours 3600))  (floor (/ now 60))))
+         (secs  (progn (cl-decf now (* mins  60))    (floor now))))
     (list days hours mins secs)))
 
-(defun* uptimes-uptime-string (&optional (boottime uptimes-boottime)
-                                         (endtime (uptimes-float-time)))
+(cl-defun uptimes-uptime-string (&optional (boottime uptimes-boottime)
+                                           (endtime (uptimes-float-time)))
   "Return `uptimes-uptime-values' as a human readable string."
   (cl-multiple-value-bind (days hours mins secs)
       (uptimes-uptime-values boottime endtime)
     (format "%d.%02d:%02d:%02d" days hours mins secs)))
 
-(defun* uptimes-wordy-uptime (&optional (boottime uptimes-boottime)
-                                        (endtime (uptimes-float-time)))
+(cl-defun uptimes-wordy-uptime (&optional (boottime uptimes-boottime)
+                                          (endtime (uptimes-float-time)))
   "Return `uptimes-uptime-values' as a \"wordy\" string."
   (cl-multiple-value-bind (days hours mins secs)
       (uptimes-uptime-values boottime endtime)
@@ -220,15 +220,15 @@ The result is returned as the following `list':
   (princ "=================== =================== ============ ==========\n")
   (cl-flet ((format-time (time)
               (format-time-string "%Y-%m-%d %T" (uptimes-time-float time))))
-    (loop for uptime in list
-       for bootsig  = (car  uptime)
-       for booted   = (cadr uptime)
-       for snapshot = (cddr uptime)
-       do (princ (format "%19s %19s %12s %s\n"
-                         (format-time booted)
-                         (format-time snapshot)
-                         (uptimes-uptime-string booted snapshot)
-                         (if (string= bootsig (uptimes-key)) "<--" ""))))))
+    (cl-loop for uptime in list
+             for bootsig  = (car  uptime)
+             for booted   = (cadr uptime)
+             for snapshot = (cddr uptime)
+             do (princ (format "%19s %19s %12s %s\n"
+                               (format-time booted)
+                               (format-time snapshot)
+                               (uptimes-uptime-string booted snapshot)
+                               (if (string= bootsig (uptimes-key)) "<--" ""))))))
 
 ;;;###autoload
 (defun uptimes ()
