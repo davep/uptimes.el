@@ -2,7 +2,7 @@
 ;; Copyright 1999-2017 by Dave Pearson <davep@davep.org>
 
 ;; Author: Dave Pearson <davep@davep.org>
-;; Version: 3.4
+;; Version: 3.5
 ;; Keywords: uptime
 ;; URL: https://github.com/davep/uptimes.el
 ;; Package-Requires: ((cl-lib "0.5") (emacs "24"))
