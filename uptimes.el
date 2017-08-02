@@ -30,7 +30,7 @@
 ;;
 ;;   <URL:https://github.com/davep/uptimes.el>
 
-;;; THANKS:
+;;; Thanks:
 ;;
 ;; Istvan Marko <imarko@pacificnet.net> for pointing out that a default of
 ;; one second for `uptimes-auto-save-interval' was probably a little OTT.
