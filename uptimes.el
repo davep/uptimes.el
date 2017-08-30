@@ -99,7 +99,7 @@
 ;; Non-customize variables.
 
 (defvar uptimes-boottime (uptimes-float-time before-init-time)
-  "The time that uptimes.el came into existance.
+  "The time that uptimes.el came into existence.
 
 Normaly populated from `before-init-time'.")
 
