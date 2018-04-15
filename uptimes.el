@@ -198,7 +198,8 @@ The result is returned as the following `list':
   (interactive)
   (uptimes-update)
   (with-temp-buffer
-    (let ((standard-output (current-buffer)))
+    (let ((standard-output (current-buffer))
+          (print-length nil))
       (pp uptimes-last-n)
       (pp uptimes-top-n)
       ;; TODO: What is the correct method of ignoring a lock error (IOW,
