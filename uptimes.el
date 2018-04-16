@@ -1,8 +1,8 @@
 ;;; uptimes.el --- Track and display emacs session uptimes.
-;; Copyright 1999-2017 by Dave Pearson <davep@davep.org>
+;; Copyright 1999-2018 by Dave Pearson <davep@davep.org>
 
 ;; Author: Dave Pearson <davep@davep.org>
-;; Version: 3.5
+;; Version: 3.6
 ;; Keywords: processes, uptime
 ;; URL: https://github.com/davep/uptimes.el
 ;; Package-Requires: ((cl-lib "0.5") (emacs "24"))
