@@ -1,4 +1,4 @@
-;;; uptimes.el --- Track and display emacs session uptimes.
+;;; uptimes.el --- Track and display emacs session uptimes. -*- lexical-binding: t -*-
 ;; Copyright 1999-2018 by Dave Pearson <davep@davep.org>
 
 ;; Author: Dave Pearson <davep@davep.org>
@@ -208,32 +208,52 @@ The result is returned as the following `list':
             (create-lockfiles nil))     ; For the benefit of GNU emacs.
         (write-region (point-min) (point-max) uptimes-database nil 0)))))
 
-(defun uptimes-print-uptimes (list)
-  "Print uptimes list LIST to `standard-output'."
-  (princ "Boot                Endtime             Uptime       This emacs\n")
-  (princ "=================== =================== ============ ==========\n")
+(defun uptimes-tabulated-list-entries ()
+  "Return list entries for `uptimes-list-mode'."
   (cl-flet ((format-time (time)
-              (format-time-string "%Y-%m-%d %T" (uptimes-time-float time))))
-    (cl-loop for uptime in list
+                         (format-time-string "%Y-%m-%d %T" (uptimes-time-float time)))
+            (highlight-current (sig s) (if (string= sig (uptimes-key))
+                                           (propertize s 'face 'success)
+                                         s)))
+    (cl-loop for uptime in uptimes-last-n
              for bootsig  = (car  uptime)
              for booted   = (cadr uptime)
              for snapshot = (cddr uptime)
-             do (princ (format "%19s %19s %12s %s\n"
-                               (format-time booted)
-                               (format-time snapshot)
-                               (uptimes-uptime-string booted snapshot)
-                               (if (string= bootsig (uptimes-key)) "<--" ""))))))
+             collect (list bootsig
+                           (vector
+                            (highlight-current bootsig (format-time booted))
+                            (highlight-current bootsig (format-time snapshot))
+                            (highlight-current bootsig (propertize (uptimes-uptime-string booted snapshot)
+                                                                   'duration (- snapshot booted))))))))
+
+(defun uptimes-sort-by-duration-pred (entry1 entry2)
+  "How to sort tabulated list entries ENTRY1 and ENTRY2 by their duration."
+  (> (get-text-property 1 'duration (elt (nth 1 entry1) 2))
+     (get-text-property 1 'duration (elt (nth 1 entry2) 2))))
+
+(define-derived-mode uptimes-list-mode tabulated-list-mode "uptimes"
+  "Show uptimes."
+  (setq tabulated-list-format
+        [("Boot" 20 t)
+         ("Endtime" 20 t)
+         ("Uptime" 12 uptimes-sort-by-duration-pred :right-align t)])
+  (setq tabulated-list-padding 2)
+  (setq tabulated-list-sort-key (cons "Boot" t))
+  (setq tabulated-list-entries #'uptimes-tabulated-list-entries)
+  (tabulated-list-init-header)
+  (when (fboundp 'tablist-minor-mode)
+    (tablist-minor-mode)))
+
 
 ;;;###autoload
 (defun uptimes ()
-  "Display the last and top `uptimes-keep-count' uptimes."
+  "Display the last `uptimes-keep-count' uptimes in a sortable table."
   (interactive)
   (uptimes-save)
-  (with-output-to-temp-buffer "*uptimes*"
-    (princ (format "Last %d uptimes\n\n" uptimes-keep-count))
-    (uptimes-print-uptimes uptimes-last-n)
-    (princ (format "\nTop %d uptimes\n\n" uptimes-keep-count))
-    (uptimes-print-uptimes uptimes-top-n)))
+  (with-current-buffer (get-buffer-create "*uptimes*")
+    (uptimes-list-mode)
+    (tabulated-list-revert)
+    (display-buffer (current-buffer))))
 
 ;;;###autoload
 (defun uptimes-current ()
