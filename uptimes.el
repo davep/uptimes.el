@@ -249,7 +249,6 @@ The result is returned as the following `list':
 ;; Register our presence and, if `uptimes-auto-save' is true, kick off the
 ;; auto-save process.
 (progn
-  (uptimes-save)
   (when uptimes-auto-save
     (setq uptimes-auto-save-timer
           (run-at-time nil uptimes-auto-save-interval #'uptimes-save)))
