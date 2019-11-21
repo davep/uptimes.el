@@ -3,7 +3,6 @@
 
 ;; Author: Dave Pearson <davep@davep.org>
 ;; Version: 3.7
-;; Package-Version: 20180416.1323
 ;; Keywords: processes, uptime
 ;; URL: https://github.com/davep/uptimes.el
 ;; Package-Requires: ((cl-lib "0.5") (emacs "24"))
