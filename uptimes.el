@@ -196,17 +196,18 @@ The result is returned as the following `list':
 (defun uptimes-save ()
   "Write the uptimes to `uptimes-database'."
   (interactive)
-  (uptimes-update)
-  (with-temp-buffer
-    (let ((standard-output (current-buffer))
-          (print-length nil))
-      (pp uptimes-last-n)
-      (pp uptimes-top-n)
-      ;; TODO: What is the correct method of ignoring a lock error (IOW,
-      ;; don't bother trying to write if there is a locking problem)?
-      (let ((inhibit-clash-detection t) ; For the benefit of XEmacs.
-            (create-lockfiles nil))     ; For the benefit of GNU emacs.
-        (write-region (point-min) (point-max) uptimes-database nil 0)))))
+  (unless noninteractive
+    (uptimes-update)
+    (with-temp-buffer
+      (let ((standard-output (current-buffer))
+            (print-length nil))
+        (pp uptimes-last-n)
+        (pp uptimes-top-n)
+        ;; TODO: What is the correct method of ignoring a lock error (IOW,
+        ;; don't bother trying to write if there is a locking problem)?
+        (let ((inhibit-clash-detection t) ; For the benefit of XEmacs.
+              (create-lockfiles nil))     ; For the benefit of GNU emacs.
+          (write-region (point-min) (point-max) uptimes-database nil 0))))))
 
 (defun uptimes-print-uptimes (list)
   "Print uptimes list LIST to `standard-output'."
