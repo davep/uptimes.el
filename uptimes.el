@@ -1,4 +1,4 @@
-;;; uptimes.el --- Track and display emacs session uptimes.
+;;; uptimes.el --- Track and display Emacs session uptimes.
 ;; Copyright 1999-2019 by Dave Pearson <davep@davep.org>
 
 ;; Author: Dave Pearson <davep@davep.org>
