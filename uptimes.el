@@ -53,7 +53,7 @@
 ;; Customize options.
 
 (defgroup uptimes nil
-  "Track emacs session uptimes."
+  "Track Emacs session uptimes."
   :group 'games
   :prefix "uptimes-")
 
@@ -132,9 +132,9 @@ If not supplied BOOTTIME defaults to `uptimes-boottime'."
                                            (endtime (uptimes-float-time)))
   "Get the different parts of an uptime.
 
-BOOTTIME is an optional boot-time for an emacs process, if not supplied the
+BOOTTIME is an optional boot-time for an Emacs process, if not supplied the
 default is the boot-time of the current process. ENDTIME is the optional
-time at which the emacs process closed down, if not supplied the default is
+time at which the Emacs process closed down, if not supplied the default is
 the current time.
 
 The result is returned as the following `list':
@@ -149,7 +149,12 @@ The result is returned as the following `list':
 
 (cl-defun uptimes-uptime-string (&optional (boottime uptimes-boottime)
                                            (endtime (uptimes-float-time)))
-  "Return `uptimes-uptime-values' as a human readable string."
+  "Return `uptimes-uptime-values' as a human readable string.
+
+BOOTTIME is an optional boot-time for an Emacs process, if not supplied the
+default is the boot-time of the current process. ENDTIME is the optional
+time at which the Emacs process closed down, if not supplied the default is
+the current time."
   (cl-multiple-value-bind (days hours mins secs)
       (uptimes-uptime-values boottime endtime)
     (format "%d.%02d:%02d:%02d" days hours mins secs)))
@@ -158,8 +163,7 @@ The result is returned as the following `list':
   "Read the uptimes database into `uptimes-last-n' and `uptimes-top-n'."
   (when (file-exists-p uptimes-database)
     (with-temp-buffer
-      (let ((inhibit-clash-detection t)  ; For the benefit of XEmacs.
-            (create-lockfiles nil))      ; For the benefit of GNU emacs.
+      (let ((create-lockfiles nil))      ; For the benefit of GNU emacs.
         (insert-file-contents uptimes-database t))
       (setq uptimes-last-n (read (current-buffer)))
       (setq uptimes-top-n  (read (current-buffer))))))
@@ -205,8 +209,7 @@ The result is returned as the following `list':
         (pp uptimes-top-n)
         ;; TODO: What is the correct method of ignoring a lock error (IOW,
         ;; don't bother trying to write if there is a locking problem)?
-        (let ((inhibit-clash-detection t) ; For the benefit of XEmacs.
-              (create-lockfiles nil))     ; For the benefit of GNU emacs.
+        (let ((create-lockfiles nil))     ; For the benefit of GNU emacs.
           (write-region (point-min) (point-max) uptimes-database nil 0))))))
 
 (defun uptimes-print-uptimes (list)
