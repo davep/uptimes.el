@@ -78,6 +78,68 @@
   :type  'integer
   :group 'uptimes)
 
+(defface uptimes-header-face
+  '((default :inherit default))
+  "Face for header (above a list of uptimes) in the `uptimes' buffer."
+  :group 'uptimes)
+
+(defface uptimes-headings-face
+  '((default :inherit font-lock-comment-face))
+  "Face for headings (after the header and before the uptimes) in the `uptimes' buffer."
+  :group 'uptimes)
+
+(defface uptimes-current-uptime-face
+  '((default :inherit font-lock-variable-name-face))
+  "Face used when the uptime of the current Emacs is shown in the `uptimes' buffer."
+  :group 'uptimes)
+
+(defface uptimes-other-uptime-face
+  '((default :inherit font-lock-constant-face))
+  "Face used when an uptime (other than for the current Emacs) is shown in the `uptimes' buffer."
+  :group 'uptimes)
+
+(defvar uptimes-headings-string
+  (concat    "\n\nBoot                Endtime             Uptime       This emacs\n"
+             "=================== =================== ============ ==========\n")
+  "String of column headings in an `uptimes' buffer.
+This is shown after the header, and before the list of uptimes above each list.
+The face `uptimes-headings-face' is used.")
+
+(defvar uptimes-current-uptime-indicator "<--"
+  "String to indicate the uptime of the current Emacs in the `'uptimes' buffer.")
+
+(defvar uptimes-show-last-uptimes-first t
+  "Whether to show the list of recent `uptimes' before top uptimes.
+Set to false to put the list of top uptimes first.")
+
+(defvar uptimes-show-booted-first t
+  "Whether to show uptimes' boot and end timestamps before their duration.
+Set to false to show the duration of the uptime first.")
+
+(defun uptimes-default-duration-formatter (days hours mins secs)
+  "Default way of formating the duration of an uptime.
+DAYS HOURS MINS and SECS are duration to be formatted.
+Rather than changing this function, set
+`uptimes-duration-formatter' to a function of your choice."
+  (format "%12s " (format "%d.%02d:%02d:%02d" days hours mins secs)))
+
+(defvar uptimes-duration-formatter #'uptimes-default-duration-formatter
+  "Function used by `uptimes' to format the duration of an uptime.
+The value should be a function that takes four arguments DAYS
+HOURS MINS and SECS and returns a string.")
+
+(defun uptimes-default-timestamp-formatter (time)
+  "Default way of formatting an uptimes timestamp TIME.
+TIME is a float.
+Rather than changing this function, set
+`uptimes-timestamp-formatter' to a function of your choice."
+  (format "%19s " (format-time-string "%Y-%m-%d %T" (uptimes-time-float time))))
+
+(defvar uptimes-timestamp-formatter #'uptimes-default-timestamp-formatter
+  "Function used by `uptimes' to format booted or ended timestamps.
+The value should be a function that takes a FLOAT and returns a string")
+
+
 ;; The following functions are borrowed from midnight.el. I've made copies
 ;; here for two reasons. First, older versions of emacs don't have
 ;; midnight.el, second, (require 'midnight) has side-effects that some
@@ -147,17 +209,9 @@ The result is returned as the following `list':
          (secs  (progn (cl-decf now (* mins  60))    (floor now))))
     (list days hours mins secs)))
 
-(cl-defun uptimes-uptime-string (&optional (boottime uptimes-boottime)
-                                           (endtime (uptimes-float-time)))
-  "Return `uptimes-uptime-values' as a human readable string.
-
-BOOTTIME is an optional boot-time for an Emacs process, if not supplied the
-default is the boot-time of the current process. ENDTIME is the optional
-time at which the Emacs process closed down, if not supplied the default is
-the current time."
-  (cl-multiple-value-bind (days hours mins secs)
-      (uptimes-uptime-values boottime endtime)
-    (format "%d.%02d:%02d:%02d" days hours mins secs)))
+(defun uptimes-with-face (face string)
+  "Return STRING decorated with face FACE."
+  (propertize string 'face face))
 
 (defun uptimes-read-uptimes ()
   "Read the uptimes database into `uptimes-last-n' and `uptimes-top-n'."
@@ -212,32 +266,72 @@ the current time."
         (let ((create-lockfiles nil))     ; For the benefit of GNU emacs.
           (write-region (point-min) (point-max) uptimes-database nil 0))))))
 
-(defun uptimes-print-uptimes (list)
-  "Print uptimes list LIST to `standard-output'."
-  (princ "Boot                Endtime             Uptime       This emacs\n")
-  (princ "=================== =================== ============ ==========\n")
-  (cl-flet ((format-time (time)
-              (format-time-string "%Y-%m-%d %T" (uptimes-time-float time))))
-    (cl-loop for uptime in list
-             for bootsig  = (car  uptime)
-             for booted   = (cadr uptime)
-             for snapshot = (cddr uptime)
-             do (princ (format "%19s %19s %12s %s\n"
-                               (format-time booted)
-                               (format-time snapshot)
-                               (uptimes-uptime-string booted snapshot)
-                               (if (string= bootsig (uptimes-key)) "<--" ""))))))
+(defun uptimes-print-uptimes (header list)
+  "Print HEADER and then all uptimes in list LIST to the current buffer.
+The format is as follows:
+
+First HEADER is shown in face `uptimes-header-face'.
+HEADER is a format string, such as \"Top %d uptimes\" in which %d
+which will be replaced by the number of uptimes in LIST.
+
+Then the string `uptimes-headings-string' is shown in
+`uptimes-headings-face'.
+
+Then each uptime is shown on a single line as: BOOTED ENDED DURATION
+- if `uptimes-show-booted-first' is nil then the duration
+   is shown before the booted/ended
+- The current uptime has `uptimes-current-uptime-indicator' appended.
+- The whole line is shown using `uptimes-current-uptime-face' and
+   `uptimes-other-uptimes-face'.
+
+The booted/ended timestamps are formatted using the function set
+in `uptimes-timestamp-formatter' and the duration is formatted using
+the function set in `uptimes-duration-formatter'."
+  (insert
+   (uptimes-with-face
+    'uptimes-header-face
+    (format header (length list)))
+   (uptimes-with-face 'uptimes-headings-face
+                      uptimes-headings-string))
+   (cl-loop for uptime in list
+            for bootsig  = (car  uptime)
+            for booted   = (cadr uptime)
+            for ended    = (cddr uptime)
+            for current-uptime = (string= bootsig (uptimes-key))
+            for booted-and-ended-string = (concat (funcall uptimes-timestamp-formatter booted)
+                                                  (funcall uptimes-timestamp-formatter ended))
+            for duration-string = (cl-multiple-value-bind (days hours mins secs)
+                                      (uptimes-uptime-values booted ended)
+                                    (funcall uptimes-duration-formatter days hours mins secs))
+            do
+            (insert
+             (uptimes-with-face
+              (if current-uptime 'uptimes-current-uptime-face 'uptimes-other-uptime-face)
+              (concat (when uptimes-show-booted-first booted-and-ended-string)
+                      duration-string
+                      (unless uptimes-show-booted-first booted-and-ended-string)
+                      (if current-uptime uptimes-current-uptime-indicator "")
+                      "\n"))))
+   (insert "\n"))
 
 ;;;###autoload
 (defun uptimes ()
-  "Display the last and top `uptimes-keep-count' uptimes."
+  "Display the last and top `uptimes-keep-count' uptimes.
+A buffer *uptimes* is created - pressing g will refresh the list.
+The uptimes are also saved using `uptimes-save'.
+
+Set `uptimes-show-last-uptimes-first' to nil to swap the order of the lists.
+See `uptimes-print-uptime' for other ways to customize the output."
   (interactive)
   (uptimes-save)
   (with-output-to-temp-buffer "*uptimes*"
-    (princ (format "Last %d uptimes\n\n" uptimes-keep-count))
-    (uptimes-print-uptimes uptimes-last-n)
-    (princ (format "\nTop %d uptimes\n\n" uptimes-keep-count))
-    (uptimes-print-uptimes uptimes-top-n)))
+    (with-current-buffer "*uptimes*"
+      (when uptimes-show-last-uptimes-first
+        (uptimes-print-uptimes "Last %d uptimes" uptimes-last-n))
+      (uptimes-print-uptimes "Top %d uptimes" uptimes-top-n)
+      (unless uptimes-show-last-uptimes-first
+        (uptimes-print-uptimes "Last %d uptimes" uptimes-last-n))
+      )))
 
 ;;;###autoload
 (defun uptimes-current ()
