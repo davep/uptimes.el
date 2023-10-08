@@ -331,6 +331,7 @@ See `uptimes-print-uptime' for other ways to customize the output."
       (uptimes-print-uptimes "Top %d uptimes" uptimes-top-n)
       (unless uptimes-show-last-uptimes-first
         (uptimes-print-uptimes "Last %d uptimes" uptimes-last-n))
+      (setq-local revert-buffer-function (lambda (&rest _ignored) (uptimes))) ; g refreshes buffer
       )))
 
 ;;;###autoload
