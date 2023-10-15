@@ -99,8 +99,8 @@
   :group 'uptimes)
 
 (defvar uptimes-headings-string
-  (concat    "\n\nBoot                Endtime             Uptime       This emacs\n"
-             "=================== =================== ============ ==========\n")
+  (concat "\n\nBoot                Endtime             Uptime       This emacs\n"
+          "=================== =================== ============ ==========\n")
   "String of column headings in an `uptimes' buffer.
 This is shown after the header, and before the list of uptimes above each list.
 The face `uptimes-headings-face' is used.")
